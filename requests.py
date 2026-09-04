@@ -98,20 +98,20 @@ def dns_request(dns_resolver: str, url: str):
             "code": "error",
         }
 
-if __name__ == "__main__":
-    defdns = "https://cloudflare-dns.com/dns-query"
-    defurl = "https://google.com"
-    while 1:
-        request = input("Select the request type: ")
-        if request == "https":
-            url = input("URL address: ")
-            print(https_request(url if len(url) else defurl)["response"])
-        elif request == "dns":
-            dns_resolver = input("DNS server: ")
-            url = input("URL address: ")
-            print(dns_request(dns_resolver if len(dns_resolver) else defdns, url if len(url) else defurl)["response"])
-
-
+# if __name__ == "__main__":
+#     defdns = "https://cloudflare-dns.com/dns-query"
+#     defurl = "https://google.com"
+#     while 1:
+#         request = input("Select the request type: ")
+#         if request == "https":
+#             url = input("URL address: ")
+#             print(https_request(url if len(url) else defurl)["response"])
+#         elif request == "dns":
+#             dns_resolver = input("DNS server: ")
+#             url = input("URL address: ")
+#             print(dns_request(dns_resolver if len(dns_resolver) else defdns, url if len(url) else defurl)["response"])
+#
+#
 
 
 
