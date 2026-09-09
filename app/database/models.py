@@ -1,8 +1,7 @@
-from sqlalchemy import Table, Column, Integer, String, MetaData, ForeignKey, text, func
+from sqlalchemy import String, ForeignKey, func
 from sqlalchemy.orm import Mapped, mapped_column
-from database import Base, str_256
+from app.database.database import Base
 from typing import Annotated
-import enum
 import datetime
 
 intpk = Annotated[int, mapped_column(primary_key=True)]
@@ -34,6 +33,6 @@ class Checks(Base):
     response_time_ms: Mapped[int]
     success: Mapped[bool]
     checked_at: Mapped[created_at]
-    
+
 
 

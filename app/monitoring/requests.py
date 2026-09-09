@@ -1,9 +1,5 @@
-from fastapi import FastAPI
-import asyncio
 import time
 import requests
-import socket
-import ssl
 
 
 #                                        РУЧНЫЕ ЗАПРОСЫ
