@@ -32,7 +32,7 @@ class Checks(Base):
     status_code: Mapped[int]
     response_time_ms: Mapped[int]
     success: Mapped[bool]
-    checked_at: Mapped[created_at]
+    created_at: Mapped[created_at]
 
 
 
