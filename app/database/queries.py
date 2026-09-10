@@ -3,7 +3,7 @@ from argon2 import PasswordHasher
 from app.database.models import Users, Monitors, Checks
 import datetime
 
-class Orm():
+class OrmQueries():
     @staticmethod
     def create_tables():
         Base.metadata.create_all(async_engine)
