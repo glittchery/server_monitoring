@@ -80,9 +80,11 @@ class OrmQueries():
 #     CHECKS
 
     @staticmethod
-    async def insert_check_log(monitor_id, status_code, response_time, success):
+    async def insert_check_log(monitor_id, status_code, response_time, success, reason):
         async with session_factory() as session:
-            check_log = Checks(monitor_id=monitor_id, status_code=status_code, response_time=response_time, success=success)
+            check_log = Checks(
+                monitor_id=monitor_id, status_code=status_code, response_time=response_time,
+                success=success, reason=reason)
             await session.add(check_log)
             await session.commit()
 
