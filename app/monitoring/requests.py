@@ -58,13 +58,15 @@ def https_request(url: str):
         elapsed = (time.perf_counter() - start) * 1000
 
         return {
-            "response": f"{url:30}" f"({response.status_code} {response.reason}) " f"{elapsed:.0f} ms",
             "code": response.status_code,
+            "reason": response.reason,
+            "response_time": elapsed,
+            "success": response.status_code == 200
         }
     except requests.RequestException as error:
         return {
-            "response": f"{url} is not availible: {error}",
-            "code": "error",
+            "code": f"{error}",
+            "success": False
         }
 
 def dns_request(dns_resolver: str, url: str):
@@ -83,15 +85,16 @@ def dns_request(dns_resolver: str, url: str):
         )
         elapsed = (time.perf_counter() - start) * 1000
         return {
-            "response": f"DNS server is availible ({response.status_code} {response.reason}) "
-                        f"{elapsed:.0f} ms " f"[address: {dns_resolver}]",
             "code": response.status_code,
+            "reason": response.reason,
+            "response_time": elapsed,
+            "success": response.status_code == 200
         }
 
     except requests.RequestException as error:
         return {
-            "response": f"DNS is not availible: {error}",
-            "code": "error",
+            "code": f"{error}",
+            "success": False
         }
 
 # if __name__ == "__main__":
