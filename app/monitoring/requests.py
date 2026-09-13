@@ -59,14 +59,14 @@ def https_request(url: str):
 
         return {
             "code": response.status_code,
+            "response_time": f"{elapsed} ms",
+            "success": response.status_code == 200,
             "reason": response.reason,
-            "response_time": elapsed,
-            "success": response.status_code == 200
         }
     except requests.RequestException as error:
         return {
-            "code": f"{error}",
-            "success": False
+            "success": False,
+            "reason": f"{error}",
         }
 
 def dns_request(dns_resolver: str, url: str):
@@ -86,15 +86,15 @@ def dns_request(dns_resolver: str, url: str):
         elapsed = (time.perf_counter() - start) * 1000
         return {
             "code": response.status_code,
-            "reason": response.reason,
             "response_time": elapsed,
-            "success": response.status_code == 200
+            "success": response.status_code == 200,
+            "reason": response.reason,
         }
 
     except requests.RequestException as error:
         return {
-            "code": f"{error}",
-            "success": False
+            "success": False,
+            "reason": f"{error}",
         }
 
 # if __name__ == "__main__":
