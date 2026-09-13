@@ -5,8 +5,13 @@ import datetime
 
 class OrmQueries():
     @staticmethod
-    def create_tables():
-        Base.metadata.create_all(engine)
+    # def create_tables():
+    #     Base.metadata.drop_all(engine)
+    #     Base.metadata.create_all(engine)
+    async def create_tables():
+        async with engine.begin() as conn:
+            await conn.run_sync(Base.metadata.drop_all)
+            await conn.run_sync(Base.metadata.create_all)
 
 #       USERS
 

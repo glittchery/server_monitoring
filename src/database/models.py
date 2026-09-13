@@ -11,8 +11,8 @@ class Users(Base):
     __tablename__ = "users"
 
     id: Mapped[intpk]
-    username: Mapped[str] = mapped_column(String(50), nullable=false, unique=true)
-    password_hash: Mapped[hash] = mapped_column(nullable=false)
+    username: Mapped[str] = mapped_column(String(50), nullable=False, unique=True)
+    password_hash: Mapped[str] = mapped_column(nullable=False)
     created_at: Mapped[created_at]
 
 class Monitors(Base):
@@ -26,6 +26,8 @@ class Monitors(Base):
     created_at: Mapped[created_at]
 
 class Checks(Base):
+    __tablename__ = "checks"
+
     id: Mapped[intpk]
     monitor_id: Mapped[int] = mapped_column(ForeignKey("monitors.id", ondelete="CASCADE"))
 
