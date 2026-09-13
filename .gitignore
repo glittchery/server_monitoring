@@ -1,4 +1,2 @@
 .idea/
 .venv/
-.env
-src/api/__pycache__
