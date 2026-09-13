@@ -20,7 +20,7 @@ class OrmQueries():
         async with session_factory() as session:
             ph = PasswordHasher()
             new_user = Users(username=username, password=ph.hash(password))
-            await session.add(new_user)
+            session.add(new_user)
             await session.commit()
 
     @staticmethod
@@ -55,7 +55,7 @@ class OrmQueries():
     async def insert_monitor(user_id, name, url):
         async with session_factory() as session:
             new_monitor = Monitors(user_id=user_id, name=name, url=url)
-            await session.add(new_monitor)
+            session.add(new_monitor)
             await session.commit()
 
     @staticmethod
@@ -97,7 +97,7 @@ class OrmQueries():
             check_log = Checks(
                 monitor_id=monitor_id, status_code=status_code, response_time=response_time,
                 success=success, reason=reason)
-            await session.add(check_log)
+            session.add(check_log)
             await session.commit()
 
     @staticmethod
