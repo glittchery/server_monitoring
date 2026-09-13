@@ -58,7 +58,7 @@ async def https_request(url: str):
         elapsed = (time.perf_counter() - start) * 1000
         return {
             "code": response.status_code,
-            "response_time": f"{elapsed} ms",
+            "response_time": f"{elapsed:.0f} ms",
             "success": response.status_code < 300,
             "reason": response.reason_phrase,
         }
@@ -85,7 +85,7 @@ async def dns_request(dns_resolver: str, url: str):
         elapsed = (time.perf_counter() - start) * 1000
         return {
             "code": response.status_code,
-            "response_time": elapsed,
+            "response_time": f"{elapsed:.0f} ms",
             "success": response.status_code < 300,
             "reason": response.reason_phrase,
         }
