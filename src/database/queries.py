@@ -1,6 +1,6 @@
-from app.database.database import session_factory, Base, engine
+from src.database.database import session_factory, Base, engine
 from argon2 import PasswordHasher
-from app.database.models import Users, Monitors, Checks
+from src.database.models import Users, Monitors, Checks
 import datetime
 
 class OrmQueries():

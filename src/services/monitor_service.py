@@ -1,4 +1,4 @@
-from app.database.queries import OrmQueries as orm
+from src.database.queries import OrmQueries as orm
 
 
 class MonitorService():

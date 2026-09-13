@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends
 from typing import Annotated
 
-from app.api.monitor_schemas import MonitorAddSchema, MonitorSchema, MonitorChangeSchema
-from app.services.monitor_service import MonitorService
+from src.api.monitor_schemas import MonitorAddSchema, MonitorSchema, MonitorChangeSchema
+from src.services.monitor_service import MonitorService
 
 monitors_router = APIRouter(
     prefix="/monitors"

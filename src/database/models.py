@@ -1,6 +1,6 @@
 from sqlalchemy import String, ForeignKey, func
 from sqlalchemy.orm import Mapped, mapped_column
-from app.database.database import Base
+from src.database.database import Base
 from typing import Annotated
 import datetime
 

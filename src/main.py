@@ -1,6 +1,6 @@
-from app.api.monitors import monitors_router
+from src.api.monitors import monitors_router
 from fastapi import FastAPI
-from app.database.queries import OrmQueries
+from src.database.queries import OrmQueries
 import os
 import sys
 import asyncio

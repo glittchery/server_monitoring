@@ -1,5 +1,5 @@
-from app.database.queries import OrmQueries as orm
-from app.monitoring.requests import dns_request, https_request
+from src.database.queries import OrmQueries as orm
+from src.monitoring.requests import dns_request, https_request
 
 async def perform_https_check(monitor_id):
     monitor = await orm.select_monitor(monitor_id)
