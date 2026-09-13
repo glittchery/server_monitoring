@@ -3,8 +3,8 @@ from src.database.queries import OrmQueries as orm
 
 class MonitorService():
     @staticmethod
-    async def create_monitor(user_id, name, url):
-        await orm.insert_monitor(user_id, name, url)
+    async def create_monitor(user_id, type_of_request, name, url):
+        await orm.insert_monitor(user_id, type_of_request, name, url)
 
     @staticmethod
     async def get_user_monitors(user_id):

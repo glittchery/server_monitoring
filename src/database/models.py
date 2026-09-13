@@ -3,6 +3,8 @@ from sqlalchemy.orm import Mapped, mapped_column
 from src.database.database import Base
 from typing import Annotated
 import datetime
+import enum
+
 
 intpk = Annotated[int, mapped_column(primary_key=True)]
 created_at = Annotated[datetime.datetime, mapped_column(server_default=func.now())]
@@ -15,12 +17,18 @@ class Users(Base):
     password_hash: Mapped[str] = mapped_column(nullable=False)
     created_at: Mapped[created_at]
 
+
+class dns_or_https(enum.Enum):
+    dns = "dns"
+    https = "https"
+
 class Monitors(Base):
     __tablename__ = "monitors"
 
     id: Mapped[intpk]
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"))
 
+    type_of_request: Mapped[dns_or_https]
     name: Mapped[str] = mapped_column(String(50))
     url: Mapped[str]
     created_at: Mapped[created_at]

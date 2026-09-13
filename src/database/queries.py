@@ -50,9 +50,9 @@ class OrmQueries():
 #     MONITORS
 
     @staticmethod
-    async def insert_monitor(user_id, name, url):
+    async def insert_monitor(user_id, type_of_request, name, url):
         async with session_factory() as session:
-            new_monitor = Monitors(user_id=user_id, name=name, url=url)
+            new_monitor = Monitors(user_id=user_id, type_of_request=type_of_request, name=name, url=url)
             session.add(new_monitor)
             await session.commit()
 

@@ -11,7 +11,7 @@ monitors_router = APIRouter(
 
 @monitors_router.post("")
 async def add_monitor(monitor: Annotated[MonitorAddSchema, Depends()]):
-    await MonitorService.create_monitor(monitor.user_id, monitor.name, monitor.url)
+    await MonitorService.create_monitor(monitor.user_id, monitor.type_of_request, monitor.name, monitor.url)
     return {"success": True}
 
 @monitors_router.get("")
