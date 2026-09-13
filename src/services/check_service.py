@@ -5,14 +5,18 @@ from src.database.models import dns_or_https
 
 async def perform_https_check(monitor_id, url):
     result = await https_request(url)
-
-    await orm.insert_check_log(monitor_id, result["code"], result["response_time"], result["success"], result["reason"])
+    if not result["success"]:
+        await orm.insert_check_log(monitor_id, None, None, result["success"], result["reason"])
+    else:
+        await orm.insert_check_log(monitor_id, result["code"], result["response_time"], result["success"], result["reason"])
 
 
 async def perform_dns_check(monitor_id, dns_resolver, url):
     result = await dns_request(dns_resolver, url)
-
-    await orm.insert_check_log(monitor_id, result["code"], result["response_time"], result["success"], result["reason"])
+    if not result["success"]:
+        await orm.insert_check_log(monitor_id, None, None, result["success"], result["reason"])
+    else:
+        await orm.insert_check_log(monitor_id, result["code"], result["response_time"], result["success"], result["reason"])
 
 
 class CheckService():

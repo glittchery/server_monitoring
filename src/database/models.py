@@ -13,8 +13,8 @@ class Users(Base):
     __tablename__ = "users"
 
     id: Mapped[intpk]
-    username: Mapped[str] = mapped_column(String(50), nullable=False, unique=True)
-    password_hash: Mapped[str] = mapped_column(nullable=False)
+    username: Mapped[str] = mapped_column(String(50), unique=True)
+    password_hash: Mapped[str]
     created_at: Mapped[created_at]
 
 
@@ -39,8 +39,8 @@ class Checks(Base):
     id: Mapped[intpk]
     monitor_id: Mapped[int] = mapped_column(ForeignKey("monitors.id", ondelete="CASCADE"))
 
-    status_code: Mapped[int]
-    response_time_ms: Mapped[str]
+    status_code: Mapped[int] = mapped_column(nullable=True)
+    response_time_ms: Mapped[str] = mapped_column(nullable=True)
     success: Mapped[bool]
     reason: Mapped[str]
     created_at: Mapped[created_at]

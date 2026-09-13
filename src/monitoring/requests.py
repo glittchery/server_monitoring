@@ -1,6 +1,6 @@
 import time
-import requests
-
+import httpx
+import asyncio
 
 #                                        РУЧНЫЕ ЗАПРОСЫ
 # def http_request(url: str, port: int):
@@ -51,28 +51,27 @@ import requests
 
 
 
-def https_request(url: str):
+async def https_request(url: str):
     try:
         start = time.perf_counter()
-        response = requests.get(url, timeout=5)
+        response = await httpx.AsyncClient().get(url, timeout=5, follow_redirects=True)
         elapsed = (time.perf_counter() - start) * 1000
-
         return {
             "code": response.status_code,
             "response_time": f"{elapsed} ms",
-            "success": response.status_code == 200,
-            "reason": response.reason,
+            "success": response.status_code < 300,
+            "reason": response.reason_phrase,
         }
-    except requests.RequestException as error:
+    except httpx.RequestError as error:
         return {
             "success": False,
             "reason": f"{error}",
         }
 
-def dns_request(dns_resolver: str, url: str):
+async def dns_request(dns_resolver: str, url: str):
     try:
         start = time.perf_counter()
-        response = requests.get(
+        response = await httpx.AsyncClient().get(
             dns_resolver,
             params={
                 "name": url,
@@ -87,30 +86,41 @@ def dns_request(dns_resolver: str, url: str):
         return {
             "code": response.status_code,
             "response_time": elapsed,
-            "success": response.status_code == 200,
-            "reason": response.reason,
+            "success": response.status_code < 300,
+            "reason": response.reason_phrase,
         }
 
-    except requests.RequestException as error:
+    except httpx.RequestError as error:
         return {
             "success": False,
             "reason": f"{error}",
         }
 
-# if __name__ == "__main__":
+# async def main():
 #     defdns = "https://cloudflare-dns.com/dns-query"
 #     defurl = "https://google.com"
-#     while 1:
+#
+#     while True:
 #         request = input("Select the request type: ")
+#
 #         if request == "https":
 #             url = input("URL address: ")
-#             print(https_request(url if len(url) else defurl)["response"])
+#             print(await https_request(url if len(url) else defurl))
+#
 #         elif request == "dns":
 #             dns_resolver = input("DNS server: ")
 #             url = input("URL address: ")
-#             print(dns_request(dns_resolver if len(dns_resolver) else defdns, url if len(url) else defurl)["response"])
+#             print(await dns_request(
+#                 dns_resolver if len(dns_resolver) else defdns,
+#                 url if len(url) else defurl
+#             ))
 #
 #
+# if __name__ == "__main__":
+#     asyncio.run(main())
+
+
+
 
 
 

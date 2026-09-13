@@ -72,7 +72,7 @@ class OrmQueries():
     async def select_monitor(monitor_id):
         async with session_factory() as session:
             result = await session.get(Monitors, monitor_id)
-            return result.scalars().all()
+            return result
 
     @staticmethod
     async def delete_monitor(monitor_id):
@@ -95,7 +95,7 @@ class OrmQueries():
     async def insert_check_log(monitor_id, status_code, response_time, success, reason):
         async with session_factory() as session:
             check_log = Checks(
-                monitor_id=monitor_id, status_code=status_code, response_time=response_time,
+                monitor_id=monitor_id, status_code=status_code, response_time_ms=response_time,
                 success=success, reason=reason)
             session.add(check_log)
             await session.commit()
