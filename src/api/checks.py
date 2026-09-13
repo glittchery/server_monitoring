@@ -1,7 +1,7 @@
 from src.services.check_service import CheckService
 from fastapi import APIRouter, Depends
 from typing import Annotated
-from src.api.check_schemas import CheckSchema, LogsInPeriodSchema
+from src.api.schemas import CheckSchema, LogsInPeriodSchema
 
 checks_router = APIRouter(
     prefix="/checks",
