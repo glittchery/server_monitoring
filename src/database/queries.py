@@ -1,16 +1,14 @@
 from src.database.database import session_factory, Base, engine
 from argon2 import PasswordHasher
 from src.database.models import Users, Monitors, Checks
+from sqlalchemy import select, delete
 import datetime
 
 class OrmQueries():
     @staticmethod
-    # def create_tables():
-    #     Base.metadata.drop_all(engine)
-    #     Base.metadata.create_all(engine)
     async def create_tables():
         async with engine.begin() as conn:
-            await conn.run_sync(Base.metadata.drop_all)
+            # await conn.run_sync(Base.metadata.drop_all)
             await conn.run_sync(Base.metadata.create_all)
 
 #       USERS
@@ -66,7 +64,7 @@ class OrmQueries():
                 .where(Monitors.user_id == user_id)
             )
             result = await session.execute(query)
-            return result
+            return result.scalars().all()
 
     @staticmethod
     async def select_monitor(monitor_id):
@@ -78,7 +76,7 @@ class OrmQueries():
     async def delete_monitor(monitor_id):
         async with session_factory() as session:
             monitor = await session.get(Monitors, monitor_id)
-            await sesion.delete(monitor)
+            await session.delete(monitor)
             await session.commit()
 
     @staticmethod

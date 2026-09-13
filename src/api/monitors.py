@@ -5,7 +5,8 @@ from src.api.monitor_schemas import MonitorAddSchema, MonitorSchema, MonitorChan
 from src.services.monitor_service import MonitorService
 
 monitors_router = APIRouter(
-    prefix="/monitors"
+    prefix="/monitors",
+    tags=["Monitors API"]
 )
 
 @monitors_router.post("")
