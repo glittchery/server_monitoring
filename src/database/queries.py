@@ -29,7 +29,7 @@ class OrmQueries():
                 .where(Users.id == user_id)
             )
             result = await session.execute(query)
-            return result
+            return result.scalars().all()
 
     @staticmethod
     async def delete_user(user_id):
@@ -70,7 +70,7 @@ class OrmQueries():
     async def select_monitor(monitor_id):
         async with session_factory() as session:
             result = await session.get(Monitors, monitor_id)
-            return result
+            return result.scalars().all()
 
     @staticmethod
     async def delete_monitor(monitor_id):
@@ -106,7 +106,7 @@ class OrmQueries():
                 .where((Checks.monitor_id == monitor_id) and (period_start <= Checks.created_at <= period_end))
             )
             result = await session.execute(query)
-            return result
+            return result.scalars().all()
 
     @staticmethod
     async def delete_logs(monitor_id, period_start, period_end):
