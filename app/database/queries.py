@@ -54,13 +54,19 @@ class OrmQueries():
             await session.commit()
 
     @staticmethod
-    async def select_monitors(user_id):
+    async def select_user_monitors(user_id):
         async with session_factory() as session:
             query = (
                 select(Monitors)
                 .where(Monitors.user_id == user_id)
             )
             result = await session.execute(query)
+            return result
+
+    @staticmethod
+    async def select_monitor(monitor_id):
+        async with session_factory() as session:
+            result = await session.get(Monitors, monitor_id)
             return result
 
     @staticmethod
@@ -71,10 +77,11 @@ class OrmQueries():
             await session.commit()
 
     @staticmethod
-    async def change_monitor_name(monitor_id, new_name):
+    async def change_monitor(monitor_id, new_name, new_url):
         async with session_factory() as session:
             monitor = await session.get(Monitors, monitor_id)
             monitor.name = new_name
+            monitor.url = new_url
             await session.commit()
 
 #     CHECKS
@@ -89,21 +96,21 @@ class OrmQueries():
             await session.commit()
 
     @staticmethod
-    async def select_check_logs(monitor_id, period_start, period_end: datetime.datetime):
+    async def select_check_logs(monitor_id, period_start, period_end):
         async with session_factory() as session:
             query = (
                 select(Checks)
-                .where(period_start <= Checks.created_at <= period_end)
+                .where((Checks.monitor_id == monitor_id) and (period_start <= Checks.created_at <= period_end))
             )
             result = await session.execute(query)
             return result
 
     @staticmethod
-    async def delete_logs(monitor_id, period_start, period_end: datetime.datetime):
+    async def delete_logs(monitor_id, period_start, period_end):
         async with session_factory() as session:
             query = (
                 delete(Checks)
-                .where(period_start <= Checks.created_at <= period_end)
+                .where((Checks.monitor_id == monitor_id) and (period_start <= Checks.created_at <= period_end))
             )
             await session.execute(query)
             await session.commit()

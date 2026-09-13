@@ -30,7 +30,7 @@ class Checks(Base):
     monitor_id: Mapped[int] = mapped_column(ForeignKey("monitors.id", ondelete="CASCADE"))
 
     status_code: Mapped[int]
-    response_time_ms: Mapped[int]
+    response_time_ms: Mapped[str]
     success: Mapped[bool]
     reason: Mapped[str]
     created_at: Mapped[created_at]
