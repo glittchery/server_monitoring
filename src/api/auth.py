@@ -40,7 +40,7 @@ async def change_credentials(
     await AuthService.update_user(user_id, new_creds.new_username, new_creds.new_password)
     return {"success": True}
 
-@auth_router.patch("/delete_account")
+@auth_router.delete("/delete_account")
 async def delete_account(
         token: TokenPayload = Depends(security.access_token_required)
 ):
