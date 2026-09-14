@@ -57,9 +57,10 @@ class OrmQueries():
 #     MONITORS
 
     @staticmethod
-    async def insert_monitor(user_id, type_of_request, name, url):
+    async def insert_monitor(user_id, type_of_request, name, url, interval):
         async with session_factory() as session:
-            new_monitor = Monitors(user_id=user_id, type_of_request=type_of_request, name=name, url=url)
+            new_monitor = Monitors(user_id=user_id, type_of_request=type_of_request,
+                                   name=name, url=url, interval=interval)
             session.add(new_monitor)
             await session.commit()
 
@@ -87,11 +88,12 @@ class OrmQueries():
             await session.commit()
 
     @staticmethod
-    async def change_monitor(monitor_id, new_name, new_url):
+    async def change_monitor(monitor_id, new_name, new_url, new_interval):
         async with session_factory() as session:
             monitor = await session.get(Monitors, monitor_id)
             monitor.name = new_name
             monitor.url = new_url
+            monitor.interval = new_interval
             await session.commit()
 
 #     CHECKS

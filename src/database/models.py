@@ -1,4 +1,4 @@
-from sqlalchemy import String, ForeignKey, func
+from sqlalchemy import String, ForeignKey, func, Integer
 from sqlalchemy.orm import Mapped, mapped_column
 from src.database.database import Base
 from typing import Annotated
@@ -26,24 +26,24 @@ class Monitors(Base):
     __tablename__ = "monitors"
 
     id: Mapped[intpk]
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"))
 
     type_of_request: Mapped[dns_or_https]
     name: Mapped[str] = mapped_column(String(50))
     url: Mapped[str]
-    created_at: Mapped[created_at]
+    interval: Mapped[int]
+    next_check_at: Mapped[created_at]
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"))
 
 class Checks(Base):
     __tablename__ = "checks"
 
     id: Mapped[intpk]
-    monitor_id: Mapped[int] = mapped_column(ForeignKey("monitors.id", ondelete="CASCADE"))
 
     status_code: Mapped[int] = mapped_column(nullable=True)
     response_time_ms: Mapped[str] = mapped_column(nullable=True)
     success: Mapped[bool]
     reason: Mapped[str]
     created_at: Mapped[created_at]
-
+    monitor_id: Mapped[int] = mapped_column(ForeignKey("monitors.id", ondelete="CASCADE"))
 
 

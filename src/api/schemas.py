@@ -6,19 +6,22 @@ class MonitorAddSchema(BaseModel):
     type_of_request: dns_or_https
     name: str = Field(max_length=50)
     url: str
+    interval_minutes: int = Field(ge=3)
 
 class MonitorSchema(BaseModel):
     id: int
-    user_id: int
     type_of_request: dns_or_https
     name: str = Field(max_length=50)
     url: str
-    created_at: datetime.datetime
+    interval_min: int = Field(ge=3)
+    next_check_at: datetime.datetime
+    user_id: int
 
 class MonitorChangeSchema(BaseModel):
     id: int
     name: str = Field(max_length=50)
     url: str
+    interval_minutes: int = Field(ge=3)
 
 class CheckSchema(BaseModel):
     id: int

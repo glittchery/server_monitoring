@@ -16,13 +16,14 @@ async def add_monitor(
         token: TokenPayload = Depends(security.access_token_required)
 ):
     user_id = int(token.sub)
-    result = await MonitorService.create_monitor(user_id, monitor.type_of_request, monitor.name, monitor.url)
+    result = await MonitorService.create_monitor(user_id, monitor.type_of_request,
+                                                 monitor.name, monitor.url, monitor.interval_minutes)
     return result
 
 @monitors_router.get("")
 async def get_user_monitors(
         token: TokenPayload = Depends(security.access_token_required)
-) -> list[Annotated[MonitorSchema, Depends()]]:
+):
     user_id = int(token.sub)
     result = await MonitorService.get_user_monitors(user_id)
     return result
@@ -33,7 +34,7 @@ async def update_monitor(
         token: TokenPayload = Depends(security.access_token_required)
 ):
     user_id = int(token.sub)
-    result = await MonitorService.update_monitor(monitor.id, monitor.name, monitor.url, user_id)
+    result = await MonitorService.update_monitor(monitor.id, monitor.name, monitor.url, monitor.interval_minutes, user_id)
     if not result["success"]:
         raise HTTPException(status_code=result["status_code"], detail="Not Found")
     return result
