@@ -16,22 +16,30 @@ class OrmQueries():
 #       USERS
 
     @staticmethod
-    async def insert_user(username, password):
+    async def insert_user(username, password_hash):
         async with session_factory() as session:
-            ph = PasswordHasher()
-            new_user = Users(username=username, password=ph.hash(password))
+            new_user = Users(username=username, password=password_hash)
             session.add(new_user)
+            await session.flush()
+            user_id = new_user.id
             await session.commit()
+            return user_id
 
     @staticmethod
     async def select_user(user_id):
         async with session_factory() as session:
+            result = await session.get(Users, user_id)
+            return result
+
+    @staticmethod
+    async def select_user_id(username):
+        async with session_factory() as session:
             query = (
                 select(Users.id)
-                .where(Users.id == user_id)
+                .where(Users.username == username)
             )
             result = await session.execute(query)
-            return result.scalars().all()
+            return result.scalar_one_or_none()
 
     @staticmethod
     async def delete_user(user_id):

@@ -36,3 +36,7 @@ class LogsInPeriodSchema(BaseModel):
     period_start: datetime.datetime
     period_end: datetime.datetime
 
+class UserLoginSchema(BaseModel):
+    username: str = Field(max_length=50)
+    password: str
+    
