@@ -5,6 +5,8 @@ class MonitorService():
     @staticmethod
     async def create_monitor(user_id, type_of_request, name, url):
         await orm.insert_monitor(user_id, type_of_request, name, url)
+        return {"success": True,
+                "status_code": 200}
 
     @staticmethod
     async def get_user_monitors(user_id):
@@ -12,11 +14,23 @@ class MonitorService():
         return result
 
     @staticmethod
-    async def update_monitor(monitor_id, new_name, new_url):
+    async def update_monitor(monitor_id, new_name, new_url, user_id):
+        monitor = await orm.select_monitor(monitor_id)
+        if monitor.user_id != user_id:
+            return {"success": False,
+                    "status_code": 404}
         await orm.change_monitor(monitor_id, new_name, new_url)
+        return {"success": True,
+                "status_code": 200}
 
     @staticmethod
-    async def delete_monitor(monitor_id):
+    async def delete_monitor(monitor_id, user_id):
+        monitor = await orm.select_monitor(monitor_id)
+        if monitor.user_id != user_id:
+            return {"success": False,
+                    "status_code": 404}
         await orm.delete_monitor(monitor_id)
+        return {"success": True,
+                "status_code": 200}
 
 
