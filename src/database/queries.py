@@ -1,8 +1,6 @@
 from src.database.database import session_factory, Base, engine
-from argon2 import PasswordHasher
 from src.database.models import Users, Monitors, Checks
 from sqlalchemy import select, delete
-import datetime
 
 class OrmQueries():
     @staticmethod

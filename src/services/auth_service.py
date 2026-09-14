@@ -24,7 +24,7 @@ class AuthService():
         user_id = await AuthService.get_user_id(username)
         result = await AuthService.get_user(user_id)
         ph = PasswordHasher()
-        if result.username == username and result.password_hash == ph.hash(password):
+        if result.username == username and ph.verify(result.password_hash, password):
             return {"success": True, "user_id": user_id}
         return {"success": False}
 
