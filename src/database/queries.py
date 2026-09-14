@@ -18,7 +18,7 @@ class OrmQueries():
     @staticmethod
     async def insert_user(username, password_hash):
         async with session_factory() as session:
-            new_user = Users(username=username, password=password_hash)
+            new_user = Users(username=username, password_hash=password_hash)
             session.add(new_user)
             await session.flush()
             user_id = new_user.id
@@ -49,12 +49,11 @@ class OrmQueries():
             await session.commit()
 
     @staticmethod
-    async def update_user(user_id, new_username, new_password):
+    async def update_user(user_id, new_username, new_password_hash):
         async with session_factory() as session:
-            ph = PasswordHasher()
             user = await session.get(Users, user_id)
             user.username = new_username
-            user.password_hash = ph.hash(new_password)
+            user.password_hash = new_password_hash
             await session.commit()
 
 #     MONITORS

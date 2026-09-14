@@ -27,3 +27,12 @@ class AuthService():
         if result.username == username and result.password_hash == ph.hash(password):
             return {"success": True, "user_id": user_id}
         return {"success": False}
+
+    @staticmethod
+    async def update_user(user_id, new_username, new_password):
+        ph = PasswordHasher()
+        await orm.update_user(user_id, new_username, ph.hash(new_password))
+
+    @staticmethod
+    async def delete_user(user_id):
+        await orm.delete_user(user_id)

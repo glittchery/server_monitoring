@@ -39,4 +39,7 @@ class LogsInPeriodSchema(BaseModel):
 class UserLoginSchema(BaseModel):
     username: str = Field(max_length=50)
     password: str
-    
+
+class UserUpdateSchema(BaseModel):
+    new_username: str = Field(max_length=50)
+    new_password: str
