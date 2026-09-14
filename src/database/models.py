@@ -7,7 +7,7 @@ import enum
 
 
 intpk = Annotated[int, mapped_column(primary_key=True)]
-created_at = Annotated[datetime.datetime, mapped_column(server_default=func.now())]
+created_at = Annotated[datetime.datetime, mapped_column(server_default=func.date_trunc("second", func.now()))]
 
 class Users(Base):
     __tablename__ = "users"
