@@ -3,10 +3,10 @@ from typing import Annotated
 from authx import AuthX, TokenPayload
 from sqlalchemy.exc import IntegrityError
 
-from src.auth_config import config
+from src.auth_config import config # NEED TO ADD YOUR AUTH_CONFIG
 from src.api.schemas import UserLoginSchema, UserUpdateSchema
 from src.services.auth_service import AuthService
-# from src.services.auth_service import
+
 
 security = AuthX(config=config)
 

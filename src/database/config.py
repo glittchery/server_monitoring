@@ -13,6 +13,6 @@ class Settings(BaseSettings):
         return f"postgresql+asyncpg://{self.DB_USER}:{self.DB_PASS}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
 
 
-    model_config = SettingsConfigDict(env_file="C:\programming\server_monitoring\.env")
+    model_config = SettingsConfigDict(env_file="YOUR ENV FILE PATH")
 
 settings = Settings()
