@@ -23,7 +23,7 @@ async def add_monitor(
 @monitors_router.get("/user_monitors")
 async def get_user_monitors(
         token: TokenPayload = Depends(security.access_token_required)
-):
+) -> list[MonitorSchema]:
     user_id = int(token.sub)
     result = await MonitorService.get_user_monitors(user_id)
     return result

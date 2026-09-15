@@ -21,7 +21,7 @@ async def perform_check(monitor_id: int, token: TokenPayload = Depends(security.
 async def get_logs(
         data: Annotated[LogsInPeriodSchema, Depends()],
         token: TokenPayload = Depends(security.access_token_required)
-) -> list[Annotated[CheckSchema, Depends()]]:
+) -> list[CheckSchema]:
     user_id = int(token.sub)
     result = await CheckService.get_logs(data.monitor_id, data.period_start, data.period_end, user_id)
     if not result["success"]:

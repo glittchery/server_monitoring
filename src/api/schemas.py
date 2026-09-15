@@ -12,8 +12,8 @@ class MonitorSchema(BaseModel):
     id: int
     type_of_request: dns_or_https
     name: str = Field(max_length=50)
-    url: AnyHttpUrl
-    interval_min: int = Field(ge=3)
+    url: str
+    interval: int = Field(ge=3)
     next_check_at: datetime.datetime
     user_id: int
 
