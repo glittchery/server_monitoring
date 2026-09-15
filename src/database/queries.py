@@ -1,6 +1,7 @@
 from src.database.database import session_factory, Base, engine
 from src.database.models import Users, Monitors, Checks
 from sqlalchemy import select, delete
+from datetime import datetime, timedelta
 
 class OrmQueries():
     @staticmethod
@@ -60,7 +61,9 @@ class OrmQueries():
     async def insert_monitor(user_id, type_of_request, name, url, interval):
         async with session_factory() as session:
             new_monitor = Monitors(user_id=user_id, type_of_request=type_of_request,
-                                   name=name, url=url, interval=interval)
+                                   name=name, url=url, interval=interval,
+                                   next_check_at=datetime.now() + timedelta(minutes=interval)
+            )
             session.add(new_monitor)
             await session.commit()
 
@@ -81,10 +84,27 @@ class OrmQueries():
             return result
 
     @staticmethod
+    async def get_monitors_to_check():
+        async with session_factory() as session:
+            query = (
+                select(Monitors)
+                .where(Monitors.next_check_at <= datetime.now())
+            )
+            result = await session.execute(query)
+            return result.scalars().all()
+
+    @staticmethod
     async def delete_monitor(monitor_id):
         async with session_factory() as session:
             monitor = await session.get(Monitors, monitor_id)
             await session.delete(monitor)
+            await session.commit()
+
+    @staticmethod
+    async def monitor_checktime_change(monitor_id, next_check_at):
+        async with session_factory() as session:
+            monitor = await session.get(Monitors, monitor_id)
+            monitor.next_check_at = next_check_at
             await session.commit()
 
     @staticmethod
@@ -112,7 +132,9 @@ class OrmQueries():
         async with session_factory() as session:
             query = (
                 select(Checks)
-                .where((Checks.monitor_id == monitor_id) and (period_start <= Checks.created_at <= period_end))
+                .where(Checks.monitor_id == monitor_id,
+                       period_start <= Checks.created_at,
+                       Checks.created_at <= period_end)
             )
             result = await session.execute(query)
             return result.scalars().all()

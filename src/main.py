@@ -1,3 +1,5 @@
+import asyncio
+from src.services.check_service import scheduler
 from src.api.monitors import monitors_router
 from src.api.checks import checks_router
 from src.api.auth import auth_router
@@ -9,7 +11,14 @@ from contextlib import asynccontextmanager
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await OrmQueries.create_tables()
+    task = asyncio.create_task(scheduler())
     yield
+
+    task.cancel()
+    try:
+        await task
+    except asyncio.CancelledError:
+        pass
 
 
 

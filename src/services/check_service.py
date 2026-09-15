@@ -1,3 +1,6 @@
+import asyncio
+from datetime import datetime, timedelta
+
 from src.database.queries import OrmQueries as orm
 from src.monitoring.requests import dns_request, https_request
 from src.database.models import dns_or_https
@@ -9,6 +12,8 @@ async def perform_https_check(monitor_id, url):
         await orm.insert_check_log(monitor_id, None, None, result["success"], result["reason"])
     else:
         await orm.insert_check_log(monitor_id, result["code"], result["response_time"], result["success"], result["reason"])
+    monitor = await orm.select_monitor(monitor_id)
+    await orm.monitor_checktime_change(monitor_id, next_check_at=datetime.now() + timedelta(minutes=monitor.interval))
 
 
 async def perform_dns_check(monitor_id, dns_resolver, url):
@@ -17,6 +22,19 @@ async def perform_dns_check(monitor_id, dns_resolver, url):
         await orm.insert_check_log(monitor_id, None, None, result["success"], result["reason"])
     else:
         await orm.insert_check_log(monitor_id, result["code"], result["response_time"], result["success"], result["reason"])
+    monitor = await orm.select_monitor(monitor_id)
+    await orm.monitor_checktime_change(monitor_id, next_check_at=datetime.now() + timedelta(minutes=monitor.interval))
+
+
+async def scheduler():
+    while True:
+        monitors = await orm.get_monitors_to_check()
+
+        await asyncio.gather(
+            *(CheckService.perform_check(monitor.id, monitor.user_id) for monitor in monitors)
+        )
+
+        await asyncio.sleep(3)
 
 
 class CheckService():
@@ -61,3 +79,5 @@ class CheckService():
         await orm.delete_logs(monitor_id, start, end)
         return {"success": True,
                 "status_code": 200}
+
+

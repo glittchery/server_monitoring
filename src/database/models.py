@@ -31,7 +31,7 @@ class Monitors(Base):
     name: Mapped[str] = mapped_column(String(50))
     url: Mapped[str]
     interval: Mapped[int]
-    next_check_at: Mapped[created_at]
+    next_check_at: Mapped[datetime.datetime]
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"))
 
 class Checks(Base):
