@@ -1,3 +1,5 @@
+from sqlalchemy.exc import IntegrityError
+
 from src.database.database import session_factory, Base, engine
 from src.database.models import Users, Monitors, Checks
 from sqlalchemy import select, delete
@@ -20,10 +22,14 @@ class OrmQueries():
         async with session_factory() as session:
             new_user = Users(username=username, password_hash=password_hash)
             session.add(new_user)
-            await session.flush()
-            user_id = new_user.id
-            await session.commit()
-            return user_id
+            try:
+                await session.flush()
+                user_id = new_user.id
+                await session.commit()
+                return user_id
+            except IntegrityError:
+                await session.rollback()
+                raise
 
     @staticmethod
     async def select_user(user_id):
@@ -56,7 +62,12 @@ class OrmQueries():
                 user.username = new_username
             if new_password_hash is not None:
                 user.password_hash = new_password_hash
-            await session.commit()
+            try :
+                await session.flush()
+                await session.commit()
+            except IntegrityError:
+                await session.rollback()
+                raise
 
 #     MONITORS
 

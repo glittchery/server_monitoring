@@ -1,4 +1,5 @@
 from argon2.exceptions import VerifyMismatchError
+from sqlalchemy.exc import IntegrityError
 
 from src.database.queries import OrmQueries as orm
 from argon2 import PasswordHasher
@@ -18,8 +19,12 @@ class AuthService():
     async def insert_user(username, password):
         ph = PasswordHasher()
         password_hash = ph.hash(password)
-        user_id = await orm.insert_user(username, password_hash)
-        return user_id
+        try:
+            user_id = await orm.insert_user(username, password_hash)
+            return user_id
+        except IntegrityError:
+            raise
+
 
     @staticmethod
     async def log_in(username, password):
@@ -39,7 +44,10 @@ class AuthService():
     @staticmethod
     async def update_user(user_id, new_username, new_password):
         ph = PasswordHasher()
-        await orm.update_user(user_id, new_username, ph.hash(new_password) if new_password is not None else None)
+        try:
+            await orm.update_user(user_id, new_username, ph.hash(new_password) if new_password is not None else None)
+        except IntegrityError:
+            raise
 
     @staticmethod
     async def delete_user(user_id):
