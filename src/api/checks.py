@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from typing import Annotated
 from authx import TokenPayload
 from src.api.schemas import CheckSchema, LogsInPeriodSchema
+import httpx
 
 checks_router = APIRouter(
     tags=["Checks API"]
@@ -12,7 +13,8 @@ checks_router = APIRouter(
 @checks_router.post("/checks")
 async def perform_check(monitor_id: int, token: TokenPayload = Depends(security.access_token_required)):
     user_id = int(token.sub)
-    result = await CheckService.perform_check(monitor_id, user_id)
+    async with httpx.AsyncClient(timeout=7) as client:
+        result = await CheckService.perform_check(monitor_id, user_id, client)
     if not result["success"]:
         raise HTTPException(status_code=result["status_code"], detail="Not Found")
     return result

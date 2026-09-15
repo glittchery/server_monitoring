@@ -1,4 +1,5 @@
 import asyncio
+import httpx
 from datetime import datetime, timedelta
 
 from src.database.queries import OrmQueries as orm
@@ -6,8 +7,8 @@ from src.monitoring.requests import dns_request, https_request
 from src.database.models import dns_or_https
 
 
-async def perform_https_check(monitor_id, url):
-    result = await https_request(url)
+async def perform_https_check(monitor_id, url, client:httpx.AsyncClient):
+    result = await https_request(url, client)
     if not result["success"]:
         await orm.insert_check_log(monitor_id, None, None, result["success"], result["reason"])
     else:
@@ -16,8 +17,8 @@ async def perform_https_check(monitor_id, url):
     await orm.monitor_checktime_change(monitor_id, next_check_at=datetime.now() + timedelta(minutes=monitor.interval))
 
 
-async def perform_dns_check(monitor_id, dns_resolver, url):
-    result = await dns_request(dns_resolver, url)
+async def perform_dns_check(monitor_id, dns_resolver, url, client:httpx.AsyncClient):
+    result = await dns_request(dns_resolver, url, client)
     if not result["success"]:
         await orm.insert_check_log(monitor_id, None, None, result["success"], result["reason"])
     else:
@@ -27,25 +28,26 @@ async def perform_dns_check(monitor_id, dns_resolver, url):
 
 
 async def scheduler():
-    while True:
-        monitors = await orm.get_monitors_to_check()
+    async with httpx.AsyncClient(timeout=7) as client:
+        while True:
+            monitors = await orm.get_monitors_to_check()
 
-        await asyncio.gather(
-            *(CheckService.perform_check(monitor.id, monitor.user_id) for monitor in monitors)
-        )
+            await asyncio.gather(
+                *(CheckService.perform_check(monitor.id, monitor.user_id, client) for monitor in monitors)
+            )
 
-        await asyncio.sleep(3)
+            await asyncio.sleep(3)
 
 
 class CheckService():
     @staticmethod
-    async def perform_check(monitor_id, user_id):
+    async def perform_check(monitor_id, user_id, client: httpx.AsyncClient):
         monitor = await orm.select_monitor(monitor_id)
         if monitor is None or monitor.user_id != user_id:
             return {"success": False,
                     "status_code": 404,}
         if monitor.type_of_request == dns_or_https.https:
-            await perform_https_check(monitor.id, monitor.url)
+            await perform_https_check(monitor.id, monitor.url, client)
         else:
             domain_list = [
                 "youtube.com",
@@ -55,7 +57,7 @@ class CheckService():
                 "spotify.com"
             ]
             for domain_name in domain_list:
-                await perform_dns_check(monitor.id, monitor.url, domain_name)
+                await perform_dns_check(monitor.id, monitor.url, domain_name, client)
         return {"success": True,
                 "status_code": 200}
 

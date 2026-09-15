@@ -51,10 +51,10 @@ import asyncio
 
 
 
-async def https_request(url: str):
+async def https_request(url: str, client: httpx.AsyncClient):
     try:
         start = time.perf_counter()
-        response = await httpx.AsyncClient().get(url, timeout=5, follow_redirects=True)
+        response = await client.get(url, follow_redirects=True)
         elapsed = (time.perf_counter() - start) * 1000
         return {
             "code": response.status_code,
@@ -68,10 +68,10 @@ async def https_request(url: str):
             "reason": f"{error}",
         }
 
-async def dns_request(dns_resolver: str, url: str):
+async def dns_request(dns_resolver: str, url: str, client: httpx.AsyncClient):
     try:
         start = time.perf_counter()
-        response = await httpx.AsyncClient().get(
+        response = await client.get(
             dns_resolver,
             params={
                 "name": url,
@@ -80,7 +80,6 @@ async def dns_request(dns_resolver: str, url: str):
             headers={
                 "Accept": "application/dns-json",
             },
-            timeout=10,
         )
         elapsed = (time.perf_counter() - start) * 1000
         return {
