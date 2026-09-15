@@ -1,5 +1,3 @@
 .idea/
 .venv/
-.env
 __pycache__/
-src/auth_config.py

@@ -1,4 +1,2 @@
 .venv
 Dockerfile
-.env
-src/auth_config.py
