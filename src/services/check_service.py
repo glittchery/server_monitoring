@@ -1,6 +1,6 @@
 import asyncio
 import httpx
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, UTC
 
 from src.database.queries import OrmQueries as orm
 from src.monitoring.requests import dns_request, https_request
@@ -14,7 +14,8 @@ async def perform_https_check(monitor_id, url, client:httpx.AsyncClient):
     else:
         await orm.insert_check_log(monitor_id, result["code"], result["response_time"], result["success"], result["reason"])
     monitor = await orm.select_monitor(monitor_id)
-    await orm.monitor_checktime_change(monitor_id, next_check_at=datetime.now() + timedelta(minutes=monitor.interval))
+    await orm.monitor_checktime_change(monitor_id,
+        next_check_at=datetime.now(UTC).replace(microsecond=0) + timedelta(minutes=monitor.interval))
 
 
 async def perform_dns_check(monitor_id, dns_resolver, url, client:httpx.AsyncClient):
@@ -24,7 +25,8 @@ async def perform_dns_check(monitor_id, dns_resolver, url, client:httpx.AsyncCli
     else:
         await orm.insert_check_log(monitor_id, result["code"], result["response_time"], result["success"], result["reason"])
     monitor = await orm.select_monitor(monitor_id)
-    await orm.monitor_checktime_change(monitor_id, next_check_at=datetime.now() + timedelta(minutes=monitor.interval))
+    await orm.monitor_checktime_change(monitor_id,
+        next_check_at=datetime.now(UTC).replace(microsecond=0) + timedelta(minutes=monitor.interval))
 
 
 async def scheduler():

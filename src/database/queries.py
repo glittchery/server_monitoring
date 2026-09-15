@@ -1,14 +1,15 @@
 from src.database.database import session_factory, Base, engine
 from src.database.models import Users, Monitors, Checks
 from sqlalchemy import select, delete
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, UTC
+
 
 class OrmQueries():
     @staticmethod
     async def create_tables():
         async with engine.begin() as conn:
             # engine.echo = False
-            # await conn.run_sync(Base.metadata.drop_all)
+            await conn.run_sync(Base.metadata.drop_all)
             await conn.run_sync(Base.metadata.create_all)
             # engine.echo = True
 
@@ -64,7 +65,8 @@ class OrmQueries():
         async with session_factory() as session:
             new_monitor = Monitors(user_id=user_id, type_of_request=type_of_request,
                                    name=name, url=str(url), interval=interval,
-                                   next_check_at=datetime.now() + timedelta(minutes=interval)
+                                   next_check_at=datetime.now(UTC).replace(microsecond=0)
+                                                 + timedelta(minutes=interval)
             )
             session.add(new_monitor)
             await session.commit()
@@ -90,7 +92,7 @@ class OrmQueries():
         async with session_factory() as session:
             query = (
                 select(Monitors)
-                .where(Monitors.next_check_at <= datetime.now())
+                .where(Monitors.next_check_at <= datetime.now(UTC))
             )
             result = await session.execute(query)
             return result.scalars().all()

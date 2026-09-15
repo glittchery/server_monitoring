@@ -1,13 +1,13 @@
-from sqlalchemy import String, ForeignKey, func, Integer
+from sqlalchemy import String, ForeignKey, func, text, DateTime
 from sqlalchemy.orm import Mapped, mapped_column
 from src.database.database import Base
 from typing import Annotated
-import datetime
+from datetime import datetime, UTC
 import enum
 
 
 intpk = Annotated[int, mapped_column(primary_key=True)]
-created_at = Annotated[datetime.datetime, mapped_column(server_default=func.date_trunc("second", func.now()))]
+created_at = Annotated[datetime, mapped_column(server_default=text("date_trunc('second', TIMEZONE('utc', now()))"))]
 
 class Users(Base):
     __tablename__ = "users"
@@ -31,7 +31,7 @@ class Monitors(Base):
     name: Mapped[str] = mapped_column(String(50))
     url: Mapped[str]
     interval: Mapped[int]
-    next_check_at: Mapped[datetime.datetime]
+    next_check_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"))
 
 class Checks(Base):
