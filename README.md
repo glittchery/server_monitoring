@@ -22,7 +22,7 @@ Backend-сервис для мониторинга доступности сай
 
 # Demo
 
-Swagger UI: 46.8.113.144:80/docs
+Swagger UI: http://46.8.113.144:80/docs
 
 
 
