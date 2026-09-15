@@ -41,7 +41,7 @@ class CheckService():
     @staticmethod
     async def perform_check(monitor_id, user_id):
         monitor = await orm.select_monitor(monitor_id)
-        if monitor.user_id != user_id:
+        if monitor is None or monitor.user_id != user_id:
             return {"success": False,
                     "status_code": 404,}
         if monitor.type_of_request == dns_or_https.https:
@@ -63,7 +63,7 @@ class CheckService():
     @staticmethod
     async def get_logs(monitor_id, start, end, user_id):
         monitor = await orm.select_monitor(monitor_id)
-        if monitor.user_id != user_id:
+        if monitor is None or monitor.user_id != user_id:
             return {"success": False,
                     "status_code": 404}
         logs = await orm.select_check_logs(monitor_id, start, end)
@@ -73,7 +73,7 @@ class CheckService():
     @staticmethod
     async def delete_logs(monitor_id, start, end, user_id):
         monitor = await orm.select_monitor(monitor_id)
-        if monitor.user_id != user_id:
+        if monitor is None or monitor.user_id != user_id:
             return {"success": False,
                     "status_code": 404}
         await orm.delete_logs(monitor_id, start, end)

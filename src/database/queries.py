@@ -144,7 +144,9 @@ class OrmQueries():
         async with session_factory() as session:
             query = (
                 delete(Checks)
-                .where((Checks.monitor_id == monitor_id) and (period_start <= Checks.created_at <= period_end))
+                .where(Checks.monitor_id == monitor_id,
+                       period_start <= Checks.created_at,
+                       Checks.created_at <= period_end)
             )
             await session.execute(query)
             await session.commit()

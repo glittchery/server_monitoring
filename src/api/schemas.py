@@ -1,18 +1,18 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, AnyHttpUrl
 from src.database.models import dns_or_https
 import datetime
 
 class MonitorAddSchema(BaseModel):
     type_of_request: dns_or_https
     name: str = Field(max_length=50)
-    url: str
+    url: AnyHttpUrl
     interval_minutes: int = Field(ge=3)
 
 class MonitorSchema(BaseModel):
     id: int
     type_of_request: dns_or_https
     name: str = Field(max_length=50)
-    url: str
+    url: AnyHttpUrl
     interval_min: int = Field(ge=3)
     next_check_at: datetime.datetime
     user_id: int
@@ -20,7 +20,7 @@ class MonitorSchema(BaseModel):
 class MonitorChangeSchema(BaseModel):
     id: int
     name: str = Field(max_length=50)
-    url: str
+    url: AnyHttpUrl
     interval_minutes: int = Field(ge=3)
 
 class CheckSchema(BaseModel):

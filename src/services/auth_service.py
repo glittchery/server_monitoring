@@ -1,3 +1,5 @@
+from argon2.exceptions import VerifyMismatchError
+
 from src.database.queries import OrmQueries as orm
 from argon2 import PasswordHasher
 
@@ -22,11 +24,17 @@ class AuthService():
     @staticmethod
     async def log_in(username, password):
         user_id = await AuthService.get_user_id(username)
+        if user_id is None:
+            return {"success": False}
         result = await AuthService.get_user(user_id)
         ph = PasswordHasher()
-        if result.username == username and ph.verify(result.password_hash, password):
-            return {"success": True, "user_id": user_id}
-        return {"success": False}
+        try:
+            ph.verify(result.password_hash, password)
+        except VerifyMismatchError:
+            return {"success": False}
+
+        return {"success": True, "user_id": user_id}
+
 
     @staticmethod
     async def update_user(user_id, new_username, new_password):

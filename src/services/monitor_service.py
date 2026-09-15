@@ -16,7 +16,7 @@ class MonitorService():
     @staticmethod
     async def update_monitor(monitor_id, new_name, new_url, new_interval, user_id):
         monitor = await orm.select_monitor(monitor_id)
-        if monitor.user_id != user_id:
+        if monitor is None or monitor.user_id != user_id:
             return {"success": False,
                     "status_code": 404}
         await orm.change_monitor(monitor_id, new_name, new_url, new_interval)
@@ -26,7 +26,7 @@ class MonitorService():
     @staticmethod
     async def delete_monitor(monitor_id, user_id):
         monitor = await orm.select_monitor(monitor_id)
-        if monitor.user_id != user_id:
+        if monitor is None or monitor.user_id != user_id:
             return {"success": False,
                     "status_code": 404}
         await orm.delete_monitor(monitor_id)
