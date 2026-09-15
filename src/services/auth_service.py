@@ -39,7 +39,7 @@ class AuthService():
     @staticmethod
     async def update_user(user_id, new_username, new_password):
         ph = PasswordHasher()
-        await orm.update_user(user_id, new_username, ph.hash(new_password))
+        await orm.update_user(user_id, new_username, ph.hash(new_password) if new_password is not None else None)
 
     @staticmethod
     async def delete_user(user_id):

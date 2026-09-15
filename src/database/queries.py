@@ -51,8 +51,10 @@ class OrmQueries():
     async def update_user(user_id, new_username, new_password_hash):
         async with session_factory() as session:
             user = await session.get(Users, user_id)
-            user.username = new_username
-            user.password_hash = new_password_hash
+            if new_username is not None:
+                user.username = new_username
+            if new_password_hash is not None:
+                user.password_hash = new_password_hash
             await session.commit()
 
 #     MONITORS
@@ -61,7 +63,7 @@ class OrmQueries():
     async def insert_monitor(user_id, type_of_request, name, url, interval):
         async with session_factory() as session:
             new_monitor = Monitors(user_id=user_id, type_of_request=type_of_request,
-                                   name=name, url=url, interval=interval,
+                                   name=name, url=str(url), interval=interval,
                                    next_check_at=datetime.now() + timedelta(minutes=interval)
             )
             session.add(new_monitor)
@@ -111,9 +113,12 @@ class OrmQueries():
     async def change_monitor(monitor_id, new_name, new_url, new_interval):
         async with session_factory() as session:
             monitor = await session.get(Monitors, monitor_id)
-            monitor.name = new_name
-            monitor.url = new_url
-            monitor.interval = new_interval
+            if new_name is not None:
+                monitor.name = new_name
+            if new_url is not None:
+                monitor.url = str(new_url)
+            if new_interval is not None:
+                monitor.interval = new_interval
             await session.commit()
 
 #     CHECKS

@@ -19,28 +19,28 @@ class MonitorSchema(BaseModel):
 
 class MonitorChangeSchema(BaseModel):
     id: int
-    name: str = Field(max_length=50)
-    url: AnyHttpUrl
-    interval_minutes: int = Field(ge=3)
+    name: str | None = Field(default=None, max_length=50)
+    url: AnyHttpUrl | None = None
+    interval_minutes: int | None = Field(default=None, ge=3)
 
 class CheckSchema(BaseModel):
     id: int
     monitor_id: int
-    status_code: int
-    response_time_ms: str
+    status_code: int | None
+    response_time_ms: str | None
     success: bool
     reason: str
     created_at: datetime.datetime
 
 class LogsInPeriodSchema(BaseModel):
     monitor_id: int
-    period_start: datetime.datetime
-    period_end: datetime.datetime
+    period_start: datetime.datetime | None = datetime.datetime(2000, 1, 1, 0, 0)
+    period_end: datetime.datetime | None = datetime.datetime(2100, 1, 1, 0, 0)
 
 class UserLoginSchema(BaseModel):
     username: str = Field(max_length=50)
     password: str
 
 class UserUpdateSchema(BaseModel):
-    new_username: str = Field(max_length=50)
-    new_password: str
+    new_username: str | None = Field(default=None, max_length=50)
+    new_password: str | None = None
