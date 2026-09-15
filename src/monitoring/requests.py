@@ -96,23 +96,25 @@ async def dns_request(dns_resolver: str, url: str, client: httpx.AsyncClient):
         }
 
 # async def main():
-#     defdns = "https://cloudflare-dns.com/dns-query"
-#     defurl = "https://google.com"
+#     async with httpx.AsyncClient() as client:
+#         defdns = "https://cloudflare-dns.com/dns-query"
+#         defurl = "https://google.com"
 #
-#     while True:
-#         request = input("Select the request type: ")
+#         while True:
+#             request = input("Select the request type: ")
 #
-#         if request == "https":
-#             url = input("URL address: ")
-#             print(await https_request(url if len(url) else defurl))
+#             if request == "https":
+#                 url = input("URL address: ")
+#                 print(await https_request(url if len(url) else defurl, client))
 #
-#         elif request == "dns":
-#             dns_resolver = input("DNS server: ")
-#             url = input("URL address: ")
-#             print(await dns_request(
-#                 dns_resolver if len(dns_resolver) else defdns,
-#                 url if len(url) else defurl
-#             ))
+#             elif request == "dns":
+#                 dns_resolver = input("DNS server: ")
+#                 url = input("URL address: ")
+#                 print(await dns_request(
+#                     dns_resolver if len(dns_resolver) else defdns,
+#                     url if len(url) else defurl,
+#                     client
+#                 ))
 #
 #
 # if __name__ == "__main__":
