@@ -1,5 +1,30 @@
+# IDE and OS files
 .idea/
+.vscode/
+.DS_Store
+
+# Python
 .venv/
-.env
 __pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Local configuration and secrets
+.env
+.env.*
+!.env.example
+!frontend/.env.example
 src/auth_config.py
+
+# Frontend dependencies and build output
+frontend/node_modules/
+frontend/dist/
+frontend/*.tsbuildinfo
+frontend/vite.config.js
+frontend/vite.config.d.ts
+
+# Logs
+*.log
+npm-debug.log*
