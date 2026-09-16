@@ -198,5 +198,5 @@ docker compose logs -f
 
 ## Авторы
 
-- [akarmain](https://github.com/akarmain) — frontend и развитие проекта.
-- [glittchery](https://github.com/glittchery) — автор [исходного репозитория](https://github.com/glittchery/server_monitoring).
+- [akarmain](https://github.com/akarmain) — frontend и deploy.
+- [glittchery](https://github.com/glittchery) — backend и deploy.
