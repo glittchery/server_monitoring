@@ -1,2 +1,9 @@
+.git
+.gitignore
+.idea
+.vscode
 .venv
-Dockerfile
+__pycache__
+*.py[cod]
+.env
+frontend
