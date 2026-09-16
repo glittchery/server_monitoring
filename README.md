@@ -44,10 +44,11 @@ server_monitoring/
 │   ├── database/        # модели, подключение и запросы к PostgreSQL
 │   ├── monitoring/      # реализация HTTPS- и DNS-проверок
 │   ├── services/        # бизнес-логика и планировщик
-│   ├── auth_config.example.py # шаблон конфигурации JWT
+│   ├── auth_config.py   # конфигурация JWT из переменных окружения
 │   └── main.py          # точка входа FastAPI
 ├── frontend/            # React-приложение
 ├── .env.example         # шаблон переменных окружения backend
+├── compose.yaml         # PostgreSQL, backend и frontend
 ├── Dockerfile
 ├── requirements.txt
 └── README.md
@@ -74,14 +75,13 @@ JWT_SECRET_KEY=replace_with_a_long_random_value
 JWT_COOKIE_SECURE=false
 ```
 
-Создайте локальные конфигурационные файлы из безопасных шаблонов:
+Создайте локальный файл окружения из безопасного шаблона:
 
 ```bash
 cp .env.example .env
-cp src/auth_config.example.py src/auth_config.py
 ```
 
-Файлы `.env` и `src/auth_config.py` исключены из Git. Backend читает настройки из окружения процесса и не загружает `.env` автоматически.
+Файл `.env` исключён из Git. Backend читает настройки из окружения процесса и не загружает `.env` автоматически.
 
 Перед локальным запуском экспортируйте переменные из файла:
 
@@ -142,40 +142,53 @@ npm run dev
 
 Панель управления будет доступна по адресу `http://localhost:5173`. Если backend недоступен, интерфейс можно открыть в демонстрационном режиме.
 
-## Запуск в Docker
+## Запуск всего приложения в Docker
 
-Соберите образ backend:
-
-```bash
-docker build -t server-monitoring .
-```
-
-Запустите контейнер, передав настройки PostgreSQL:
+На сервере установите Docker с Compose plugin, скопируйте пример окружения и замените значения `DB_PASS` и `JWT_SECRET_KEY`:
 
 ```bash
-docker run --rm \
-  --env-file .env \
-  -p 8000:80 \
-  server-monitoring
+cp .env.example .env
+nano .env
 ```
 
-Убедитесь, что база данных доступна контейнеру по адресу из `DB_HOST`.
+После настройки всё приложение запускается одной командой:
+
+```bash
+docker compose up -d --build
+```
+
+Compose автоматически:
+
+- запускает PostgreSQL с постоянным Docker volume;
+- ждёт готовности базы данных;
+- запускает FastAPI и проверяет `/health`;
+- собирает React-приложение и раздаёт его через Nginx;
+- проксирует запросы frontend с `/api` на backend.
+
+По умолчанию приложение доступно на `http://SERVER_IP`, а Swagger UI — на `http://SERVER_IP/docs`. Порт можно изменить через `APP_PORT`, например `APP_PORT=8080` в `.env`. Для просмотра состояния и логов используйте:
+
+```bash
+docker compose ps
+docker compose logs -f
+```
+
+Для обновления после получения нового кода снова выполните `docker compose up -d --build`. Остановить приложение можно командой `docker compose down`; данные PostgreSQL сохранятся в volume `pulse_postgres_data`.
 
 ## Основные API-маршруты
 
 | Метод | Маршрут | Назначение |
 |---|---|---|
-| `POST` | `/auth/register` | Регистрация пользователя |
-| `POST` | `/auth/login` | Вход в систему |
-| `PATCH` | `/auth/account` | Изменение учётных данных |
-| `DELETE` | `/auth/account` | Удаление аккаунта |
-| `POST` | `/monitors/create_new` | Создание монитора |
-| `GET` | `/monitors/user_monitors` | Список мониторов пользователя |
-| `PATCH` | `/monitors/{monitor_id}` | Изменение монитора |
-| `DELETE` | `/monitors/{monitor_id}` | Удаление монитора |
-| `POST` | `/checks` | Ручной запуск проверки |
-| `GET` | `/monitors/{monitor_id}/checks` | История проверок |
-| `DELETE` | `/monitor/{monitor_id}/checks` | Удаление истории за период |
+| `POST` | `/api/auth/register` | Регистрация пользователя |
+| `POST` | `/api/auth/login` | Вход в систему |
+| `PATCH` | `/api/auth/account` | Изменение учётных данных |
+| `DELETE` | `/api/auth/account` | Удаление аккаунта |
+| `POST` | `/api/monitors/create_new` | Создание монитора |
+| `GET` | `/api/monitors/user_monitors` | Список мониторов пользователя |
+| `PATCH` | `/api/monitors/{monitor_id}` | Изменение монитора |
+| `DELETE` | `/api/monitors/{monitor_id}` | Удаление монитора |
+| `POST` | `/api/checks` | Ручной запуск проверки |
+| `GET` | `/api/monitors/{monitor_id}/checks` | История проверок |
+| `DELETE` | `/api/monitor/{monitor_id}/checks` | Удаление истории за период |
 
 Параметры запросов и схемы ответов всегда можно посмотреть в Swagger UI.
 

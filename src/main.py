@@ -28,8 +28,6 @@ app.include_router(monitors_router)
 app.include_router(checks_router)
 
 
-
-
-
-
-
+@app.get("/health", include_in_schema=False)
+async def health():
+    return {"status": "ok"}

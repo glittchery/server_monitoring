@@ -16,7 +16,6 @@ __pycache__/
 .env.*
 !.env.example
 !frontend/.env.example
-src/auth_config.py
 
 # Frontend dependencies and build output
 frontend/node_modules/
